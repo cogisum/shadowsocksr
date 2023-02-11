@@ -1017,9 +1017,16 @@ class TCPRelayHandler(object):
         # handle remote writable event
         self._stage = STAGE_STREAM
         if self._data_to_write_to_remote:
-            data = b''.join(self._data_to_write_to_remote)
-            self._data_to_write_to_remote = []
-            self._write_to_sock(data, self._remote_sock)
+            use_old = False
+            if use_old or len(self._data_to_write_to_remote) == 1:
+                data = b''.join(self._data_to_write_to_remote)
+                self._data_to_write_to_remote = []
+                self._write_to_sock(data, self._remote_sock)
+            else:
+                for data in self._data_to_write_to_remote:
+                    self._write_to_sock(data, self._remote_sock)
+                    time.sleep(0.001)
+                self._data_to_write_to_remote = []
         else:
             self._update_stream(STREAM_UP, WAIT_STATUS_READING)
 

@@ -543,6 +543,7 @@ class auth_aes128_sha1(auth_base):
         data = data + struct.pack('<H', data_len) + struct.pack('<H', rnd_len)
         mac_key = self.server_info.iv + self.server_info.key
         uid = os.urandom(4)
+        """
         if b':' in to_bytes(self.server_info.protocol_param):
             try:
                 items = to_bytes(self.server_info.protocol_param).split(b':')
@@ -550,6 +551,7 @@ class auth_aes128_sha1(auth_base):
                 uid = struct.pack('<I', int(items[0]))
             except:
                 pass
+        """
         if self.user_key is None:
             self.user_key = self.server_info.key
         encryptor = encrypt.Encryptor(to_bytes(base64.b64encode(self.user_key)) + self.salt, 'aes-128-cbc', b'\x00' * 16)
